@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,8 +30,32 @@ public class ContactController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping
+    public Contact create(@RequestBody Contact contact){
+        return contactRepository.save(contact);
+    }
 
+    @PutMapping ("/{id}")
+    public ResponseEntity update(@PathVariable Long id, @RequestBody Contact contact ){
+        return contactRepository.findById(id)
+                .map (record -> {
+                            record.setName(contact.getName());
+                            record.setPhone(contact.getPhone());
+                            record.setEmail(contact.getEmail());
 
+                            return ResponseEntity.ok().body(contactRepository.save(record));
+                        }
+                ).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        return contactRepository.findById(id)
+                .map(record -> {
+                    contactRepository.delete(record);
+                    return ResponseEntity.ok().build();
+                }).orElse(ResponseEntity.notFound().build());
+    }
 
     //Exemplos de uso de Java Stream
     public List<Contact> findAllContactsNamedJonas(){
@@ -47,7 +72,7 @@ public class ContactController {
     }
 
 /*    @GetMapping("/{name}")// GET /contacts/asgfsadfg
-    public ResponseEntity findByName( String name){
+    public ResponseEntity findByName( @PathVariable  String name){
 
     }
   */

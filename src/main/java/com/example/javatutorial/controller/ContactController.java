@@ -2,11 +2,14 @@ package com.example.javatutorial.controller;
 
 import com.example.javatutorial.model.Contact;
 import com.example.javatutorial.repository.ContactRepository;
+import com.example.javatutorial.repository.PhoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.ws.Response;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,6 +17,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping({"/contacts"})
 public class ContactController {
+
+    @Autowired
+    private PhoneRepository phoneRepository;
 
     @Autowired
     private ContactRepository contactRepository;
@@ -40,9 +46,8 @@ public class ContactController {
         return contactRepository.findById(id)
                 .map (record -> {
                             record.setName(contact.getName());
-                            record.setPhone(contact.getPhone());
                             record.setEmail(contact.getEmail());
-
+                            record.setPhones(contact.getPhones());
                             return ResponseEntity.ok().body(contactRepository.save(record));
                         }
                 ).orElse(ResponseEntity.notFound().build());
@@ -59,8 +64,9 @@ public class ContactController {
 
     //Exemplos de uso de Java Stream
     public List<Contact> findAllContactsNamedJonas(){
-        return contactRepository.findAll().stream()
+        return contactRepository.findAll().parallelStream()
                 .filter(contact -> contact.getName().equalsIgnoreCase("Jonas"))
+                .sorted((c1,c2) -> c1.getId().compareTo(c2.getId()))
                 .collect(Collectors.toList());
     }
 

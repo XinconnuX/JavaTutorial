@@ -1,6 +1,7 @@
 package com.example.javatutorial.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="contact")
@@ -12,7 +13,9 @@ public class Contact {
 
     private String name;
     private String email;
-    private String phone;
+
+    @OneToMany(mappedBy = "contactId", cascade = CascadeType.ALL)
+    private List<Phone> phones;
 
     public Long getId() {
         return id;
@@ -38,12 +41,11 @@ public class Contact {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
+    public List<Phone> getPhones() {
+        return phones;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
     }
-
 }

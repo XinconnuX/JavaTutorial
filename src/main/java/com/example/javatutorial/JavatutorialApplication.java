@@ -17,7 +17,7 @@ public class JavatutorialApplication {
 	}
 
 	//Utiliar para TESTE
-	@Bean
+/*	@Bean
 	CommandLineRunner init(ContactRepository repository) {
 		return args -> {
 			repository.deleteAll();
@@ -33,5 +33,5 @@ public class JavatutorialApplication {
 					.forEach(System.out::println);
 		};
 	}
-
+*/
 }
